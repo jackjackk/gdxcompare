@@ -1,0 +1,37 @@
+#+OPTIONS: toc:nil h:1
+
+* Purpose
+
+Tool to compare symbols in GAMS Data eXchange (GDX) files with time series data (with a ~t~ dimension which will be always shown in the x-axis).
+
+* Requirements
+
+- Python (tested only with version 2.7).
+- up-to-date [[http://www.numpy.org/%E2%80%8E][numpy]] module.
+- up-to-date [[http://pandas.pydata.org/][pandas]] module.
+- GAMS installation with the same architecture of Python (e.g. 32bit Python will work with 32bit GAMS).
+- ~gdxcc.py~ in ~PYTHONPATH~ environment variable.
+
+* Options
+
+Options
+| Short version   | Long version          | Description                                                                                                                                                                                                                                   |
+|-----------------+-----------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -h              | --help                | Show this options list and exit                                                                                                                                                                                                               |
+| -m XMAX         | --xmax=XMAX           | Max value for x-axis [0 = no max, default]                                                                                                                                                                                                    |
+| -f XMIN         | --xmin=XMIN           | Min value for x-axis [0 = no min, default]                                                                                                                                                                                                    |
+| -r RENAME_STRING | --rename=RENAME_STRING | Comma-separated list of new names to give to GDXs (no spaces)                                                                                                                                                                                 |
+| -s SYMB_REGEX    | --symb=SYMB_REGEX      | Regex for filtering symbols [use ''frep'' profile by default], see option below                                                                                                                                                               |
+| -p PROF         | --profile=PROF        | Profile name, associated to a predefined combination of regex for filtering symbols [use a profile called ''frep'' by default, defined in ''compare.py'', which gives a subset of results that are usually looked in WITCH GDX results files] |
+
+For example:
+
+#+BEGIN_EXAMPLE
+gdxcompare -sQ -rbau,ref -m20 results_bau.gdx results_ref.gdx
+#+END_EXAMPLE
+
+will compare symbols starting with ''Q'' of the two GDX files ''results_bau.gdx'' and ''results_ref.gdx'' in the current path, labelling them as ''bau'' and ''ref'', and showing results up to period 20.
+
+* DISCLAIMER
+
+THIS SOFTWARE IS PRIVIDED "AS IS" AND COMES WITH NO WARRANTY. USE AT YOUR OWN RISK. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING BUT NOT LIMITED TO LOSS OR CORRUPTION OF DATA). USE AT YOUR OWN RISK.

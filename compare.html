@@ -1,0 +1,53 @@
+<html>
+<style>
+td {
+vertical-align:top
+}
+</style>
+<head>
+  <title>GDX Compare 1.0alpha</title>
+<script type="text/javascript"
+  src="dygraph-combined.js"></script>
+<script type="text/javascript"
+  src="menusHandler.js"></script>
+<script type="text/javascript"
+  src="data.txt"></script>
+<script>
+window.onload = init;
+</script>
+</head>
+<body>
+<div >
+<table id="bigone">
+  <tr>
+	<td>
+	  <table id="menus">
+		<tr>
+		  <th>
+			Symbols
+		  </th>
+		</tr>
+		<tr>
+		  <td id="symbMenu">
+		  </td>
+		</tr>
+	  </table>
+	</td>
+	<td align="right" width="100%">
+	  <table id="graph" width="100%">
+		<tr>
+		  <th id="graphtitle">
+		  </th>
+		</tr>
+		<tr>
+		  <td>
+			<div id="graphdiv" class="myCol"></div>
+		  </td>
+		</tr>
+	  </table>
+	</td>
+  </tr>
+</table>
+</div>
+</body>
+</html>
