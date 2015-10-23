@@ -38,119 +38,26 @@ def add_to_doompol(new_sorted_elemlist):
     dompool.append(new_sorted_elemlist)
     return i+1
 
-rep_filt_dict = {
-    'rep_emissions' : ['CO2|Fossil Fuels and Industry|Energy Supply',
-                       'CO2|Fossil Fuels and Industry|Energy Supply|Electricity',
-                       'CO2|Fossil Fuels and Industry|Energy Supply|Non-electricity',
-                       'CO2|Land Use',
-                       'CO2|Avoided Deforestation',
-                       'CO2|Land Use + Avoided Deforestation',
-                       'GHG|International Trading System',
-                       'GHG|Allowance Allocation',
-                       'GHG','N2O','CH4',
-                       'GHG|Abatement'],
-    'rep_capacity':None,
-    'rep_capital_cost':None,
-    'rep_final_energy':None,
-    'rep_lcoe':None,
-    'rep_policy_cost':['Additional Total Energy System Cost',
-                   'consumption Loss',
-                   'gdp Loss',
-                   'gdp Loss %'],
-    'rep_price_emissions':None,
-    'rep_price_energy':None,
-
-    'rep_primary_energy': ['Total',
-'Biomass',
-'Biomass|Electricity',
-'Biomass|Electricity|w/ CCS',
-'Biomass|Energy Crops',
-'Biomass|Modern',
-'Biomass|Traditional',
-'Coal',
-'Coal|Electricity',
-'Coal|Electricity|w/ CCS',
-'Electricity',
-'Fossil',
-'Fossil|w/ CCS',
-'Gas',
-'Gas|Electricity',
-'Gas|Electricity|w/ CCS',
-'Hydro',
-'Non-Biomass Renewables',
-'Nuclear',
-'Oil',
-'Oil|Electricity',
-'Other',
-'Wind'],
-    'rep_secondary_energy':['Total',
-'Electricity',
-'Electricity|Biomass',
-'Electricity|Biomass|w/ CCS',
-'Electricity|Coal',
-'Electricity|Coal|w/ CCS',
-'Electricity|Gas',
-'Electricity|Gas|w/ CCS',
-'Electricity|Hydro',
-'Electricity|Non-Biomass Renewables',
-'Electricity|Nuclear',
-'Electricity|Oil',
-'Electricity|Other',
-'Gases',
-'Liquids',
-'Liquids|Biomass',
-'Liquids|Biomass|1st Generation',
-'Liquids|Biomass|Energy Crops',
-'Liquids|Oil',
-'Solids',
-'Solids|Biomass',
-'Solids|Coal',
-'Electricity|Wind'],
-    'trade_emissions_value':None,
-    'trade_emissions_volume':None,
-    'trade_primary_energy_value':None,
-    'trade_primary_energy_volume':None,
-    'rep_consumption':None,
-    'rep_gdp':None,
-    'rep_population':None,
-    'rep_interest_rate':None,
-    'rep_gdp_pc':None,
-    'rep_consumption_pc':None,
-    'rep_intensity_energy_output':None,
-    'rep_intensity_carbon_energy':None,
-    'rep_intensity_carbon_output':None,
-'rep_forcing':None,
-'rep_concentration':None,
-'rep_temperature':None,
-'rep_trade_emissions_volume':None,
-'rep_trade_emissions_value':None,
-'rep_trade_energy_volume':None,
-'rep_trade_energy_value':None
-       }
-
-profile_dict = {
-    'rep' : '^rep_.*$',
-    'frep' : rep_filt_dict,
-    'vars' : '^[A-EG-Z_]+$'
-}
-
 usage = "usage: %prog [options] gdx1 gdx2 ..."
 parser = optparse.OptionParser(usage=usage)
 parser.add_option('-m','--xmax', action='store', type='int', dest='xmax', default = 0, help='Max value for x-axis [0 = no max]')
 parser.add_option('-f','--xmin', action='store', type='int', dest='xmin', default = 0, help='Min value for x-axis [0 = no min]')
 parser.add_option('-r','--rename', action='store', type='string', dest='rename_string', default = '', help='Comma-separated list of new names to give to gdx')
 #parser.add_option('-s','--symb', action='store', type='string', dest='symb_regex', default = '^[A-Z_]+$', help='Name of the set used as x-axis')
-parser.add_option('-s','--symb', action='store', type='string', dest='symb_regex', default = '', help='Name of the set used as x-axis')
-parser.add_option('-p','--profile', action='store', type='string', dest='prof', default = 'frep', help='Name of the set used as x-axis')
+parser.add_option('-s','--symb', action='store', type='string', dest='symb_regex', default = '', help='Regex to filter names of the symbols to plot')
+parser.add_option('-p','--profile', action='store', type='string', dest='prof', default = '', help='Name of file under profiles subdir with predefined symbol regex to use (w/o ".py")')
 (options, args) = parser.parse_args()
 
 if len(args) == 0:
+    parser.print_help()
     sys.exit(0)
 
+comparePath = os.path.dirname(os.path.realpath(__file__)) #os.path.abspath(os.path.split(sys.argv[0])[0])
 filt_dict = None
 class dummy_symb_regex: pass
-if options.symb_regex == '':
-    prof = profile_dict[options.prof]
+if options.symb_regex == '' and options.prof != '':
+    with open (os.path.join(comparePath,'profiles','%s.py'%(options.prof)), "r") as fileprof:
+        prof = eval(fileprof.read())
     if isinstance(prof,dict):
         options.symb_regex = '^({0})$'.format('|'.join(prof.keys()))
         filt_dict = prof
@@ -182,7 +89,6 @@ else:
     if len(gdxNames) != len(gdxList):
         raise Exception('Please provide a rename list with the same number of elements as the gdx')
 
-comparePath = os.path.dirname(os.path.realpath(__file__)) #os.path.abspath(os.path.split(sys.argv[0])[0])
 fout = file(os.path.join(comparePath,'data.txt'),'w')
 fout.write('var symbList = [\n')
 
