@@ -34,3 +34,12 @@ If InStr(wshUserEnv( "PYTHONPATH" ), strFolderpath) = 0 Then
 Else
     WScript.Echo "PYTHONPATH was already set up!"
 End If
+
+Set fso = CreateObject("Scripting.FileSystemObject")
+strFolderpath = fso.GetAbsolutePathName(".")
+If InStr(wshUserEnv( "PATH" ), strFolderpath) = 0 Then
+    wshUserEnv( "PATH" ) = strFolderpath & ";" & wshUserEnv( "PATH" )
+    WScript.Echo "PATH updated!"
+Else
+    WScript.Echo "PATH was already set up!"
+End If

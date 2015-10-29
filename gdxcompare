@@ -1,0 +1,15 @@
+arglist=()
+for f; do
+if [ "${f:0:1}" = "-" ]; then
+arglist+=("$f")
+else
+ftemp=$(cygpath -aw "$f" 2>/dev/null)
+if [ $? -eq 0 ]; then
+arglist+=("$ftemp")
+else
+arglist+=("$f")
+fi
+fi
+done
+echo "Please wait..."
+python.exe "$(cygpath -aw "$(dirname "$(readlink -f "$0")")")"\\gdxcompare.py "${arglist[@]}"
