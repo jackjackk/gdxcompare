@@ -6,7 +6,7 @@ Created on Wed Mar 21 14:24:21 2012
 @author: Marangoni
 """
 import sys, os
-from gdxpy import *
+from gdxpy.gdxpy import *
 import numpy as np
 import re
 import traceback
