@@ -7,7 +7,7 @@ Created on Wed Mar 21 14:24:21 2012
 """
 from __future__ import print_function
 import sys, os
-from gdxpy.gdxpy import *
+from gdxpy import *
 import numpy as np
 import re
 import traceback
