@@ -121,7 +121,7 @@ with open(os.path.join(comparePath,'data.txt'), 'w') as fout:
                 filt = filt_dict[s]
             except:
                 filt = None
-        svar = gload(s,[gdxList[ig] for ig in realgdxlist],reshape=RESHAPE_SERIES,clear=True,filt=filt,single=False,remove_underscore=False,returnfirst=True)
+            svar = gload(s,[gdxList[ig] for ig in realgdxlist],reshape=RESHAPE_SERIES,clear=True,filt=filt,single=False,remove_underscore=False,returnfirst=True)
         except AssertionError as e:
             message = e.args[0]
             print(message)
@@ -171,7 +171,7 @@ with open(os.path.join(comparePath,'data.txt'), 'w') as fout:
                 domlist.append(add_to_doompol(sorted_values))
             #df.index = pd.MultiIndex.from_tuples([tuple([np.searchsorted(sorted_levels_values[i],x[i]) for i in range(nx)]) for x in df.index])
             data = {}
-            for k,v in df.T.items():
+            for k,v in df.T.iteritems():
                 if ((xaxisMin != 0) and (k[iax] < xaxisMin)) or ((xaxisMax != np.inf) and (k[iax] > xaxisMax)):
                     continue
                 val2write = np.zeros(ngdx)
