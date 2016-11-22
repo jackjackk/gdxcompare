@@ -7,13 +7,13 @@ Tool to compare symbols in GAMS Data eXchange (GDX) files with time series data 
 
 * Usage
 #+BEGIN_EXAMPLE
-python -m gdxcompare.gdxcompare [options] gdx1 gdx2 ...
+python -m gdxcompare [options] gdx1 gdx2 ...
 #+END_EXAMPLE
 [[file:other/gdxcompare-screenshot.png]]
 - Symbols (variables, parameters) are listed on the left and are selected by left clicking.
 - Set dependencies and corresponding elements are listed in adjacent columns. Set elements are selected via mouse hovering.
 - The color of the cells indicate the relative variance across elements in a set, so that blue elements will exhibit smaller differences across GDXs than red elements.
-- The time series of the queried data is shown on the right. A title reports the description of the selected symbol and the last element selected.
+- The time series of the queried data is shown on the right. A title reports the description of the selected symbol and the last element selected. The time axis is identified as the first set with integer elements.
 - Zooming is supported via horizontal or vertical mouse dragging. Mouse hovering provides details on the top right corner.
 * Requirements
 
@@ -38,7 +38,7 @@ Options
 For example:
 
 #+BEGIN_EXAMPLE
-python -m gdxcompare.gdxcompare -sQ -rbau,ref -m20 results_bau.gdx results_ref.gdx
+python -m gdxcompare -sQ -rbau,ref -m20 results_bau.gdx results_ref.gdx
 #+END_EXAMPLE
 
 will compare symbols starting with ''Q'' of the two GDX files ''results_bau.gdx'' and ''results_ref.gdx'' in the current path, labelling them as ''bau'' and ''ref'', and showing results up to period 20.
