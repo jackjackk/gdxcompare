@@ -118,7 +118,7 @@ for s,realgdxlist in symb2gdxlist_dict.iteritems():
             filt = filt_dict[s]
         except:
             filt = None
-        svar = gload(s,[gdxList[ig] for ig in realgdxlist],reshape=False,clear=True,filt=filt,single=False,remove_underscore=False,returnfirst=True)
+        svar = gload(s,[gdxList[ig] for ig in realgdxlist],reshape=RESHAPE_SERIES,clear=True,filt=filt,single=False,remove_underscore=False,returnfirst=True)
     except AssertionError as e:
         message = e.args[0]
         print message
@@ -130,7 +130,7 @@ for s,realgdxlist in symb2gdxlist_dict.iteritems():
         print 'Skipping',s
         continue
     try:
-        df = svar.stack().unstack(0)
+        df = svar.unstack(0)
         domlist = []
         try:
             nx = len(df.axes[0].levels)
