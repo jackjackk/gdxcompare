@@ -3,7 +3,7 @@
 
 * Purpose
 
-Tool to compare symbols in GAMS Data eXchange (GDX) files with time series data (with a ~t~ dimension which will be always shown in the x-axis).
+Tool to compare symbols in GAMS Data eXchange (GDX) files with time series data (specifically integer indexed data).
 
 * Usage
 #+BEGIN_EXAMPLE
