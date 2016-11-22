@@ -11,6 +11,7 @@ Add ~gdxcompare~ path to the ~PYTHONPATH~ environment variable, then call
 #+BEGIN_EXAMPLE
 python -m gdxcompare [options] gdx1 gdx2 ...
 #+END_EXAMPLE
+An HTML page will open up, showing something similar to the following
 [[file:other/gdxcompare-screenshot.png]]
 - Symbols (variables, parameters) are listed on the left and are selected by left clicking.
 - Set dependencies and corresponding elements are listed in adjacent columns. Set elements are selected via mouse hovering.
