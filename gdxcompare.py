@@ -67,7 +67,7 @@ if options.symb_regex == '' and options.prof != '':
         filt_dict = prof
     else:
         options.symb_regex = prof
-if options.symb_regex[0] == '@':
+if options.symb_regex.startswith('@'):
     symb_regex = dummy_symb_regex()
     symb_regex.match = lambda x : eval(options.symb_regex[1:])
 else:
