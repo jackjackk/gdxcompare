@@ -266,7 +266,9 @@ function getColor(preIndList,domId) {
 	var ret = symbList.values[domId][preIndList];
 
 	if (ret != undefined) {
-		currSymb.tempMaxDiff = Math.max(ret,currSymb.tempMaxDiff);
+        if (! isNaN(ret)) {
+		    currSymb.tempMaxDiff = Math.max(ret,currSymb.tempMaxDiff);
+        }
 		return ret;
 	}
 	// Otherwise...
@@ -278,7 +280,7 @@ function getColor(preIndList,domId) {
 		d = currSymb.data[preIndList];
 		if (d != undefined) {
 			for (var i=0; i<series.length;i++) {
-				if (d[i] != 0) {
+				if ((d[i] != 0) && (! isNaN(d[i]))) {
 					ret = 1;
 					break;
 				}
@@ -286,15 +288,19 @@ function getColor(preIndList,domId) {
 			if (ret==1) {
 				var cum = 0.0;
 				for (i=d.length-1;i>=0;i--) {
+                    if (isNaN(d[i])) continue;
 					cum += d[i];
 				}
 				var avg = cum/d.length;
 				cum = 0.0;
 				for (i=d.length-1;i>=0;i--) {
+                    if (isNaN(d[i])) continue;
 					cum += Math.pow(d[i]-avg,2);
 				}
 				ret = cum;
-				currSymb.tempMaxDiff = Math.max(ret,currSymb.tempMaxDiff);
+                if (! isNaN(ret)) {
+				    currSymb.tempMaxDiff = Math.max(ret,currSymb.tempMaxDiff);
+                }
 			}
 		}
 //		alert('preIndList: '+preIndList+'; domId: '+domId+'; data: '+currSymb.data[preIndList]+'; ret: '+ret);
@@ -385,7 +391,7 @@ function colorColumn(j) {
 		tempPreIndList  = preIndList+i;
 		vcol[i] = getColor(tempPreIndList,j);
 //		alert(tempPreIndList+': '+vcol[i]);
-		if (vcol[i] != -1) {
+		if ((vcol[i] != -1) && (! isNaN(vcol[i]))) {
 			if (vmax == -1)
 				vmax = vcol[i];
 			else

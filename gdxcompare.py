@@ -187,7 +187,7 @@ with open(os.path.join(comparePath,'data.txt'), 'w') as fout:
                             val2write[ig] = y
                     except:
                         pass
-                data[','.join(['%d' % np.searchsorted(dompool[domlist[i]],k[i]) for i in newaxslist])] = [float('%.2e' % x) for x in list(val2write)]
+                data[','.join(['%d' % np.searchsorted(dompool[domlist[i]],k[i]) for i in newaxslist])] = [float('%.2e' % x) if x != 0.0 else 'NaN' for x in list(val2write)]
             if domcounter>0:
                 fout.write(',\n')
             fout.write('new Symb("%s","%s",%s,%s)' % (s, symb2desc_dict[s], str([domlist[i] for i in newaxslist]), str(data)))
