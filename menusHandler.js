@@ -241,6 +241,7 @@ function updatePlot() {
 				  labels: dataHeader,
                   title: currSymb.lastElem.toUpperCase(),
 				  xlabel: 'MaxDiff: '+currSymb.maxDiff+'; TempMaxDiff: '+currSymb.tempMaxDiff,
+                  includeZero: true,
 				  sigFigs: 3,
 				  colorValue: 0.8,
 				  strokeWidth: 3,
