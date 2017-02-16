@@ -21,13 +21,13 @@
                "wbio"],
 
     'Q_EN' : ["elgastr",
-              "elgeo",
               "elhydro",
               "elnuclear",
               "eloil",
               "elpb",
               "elpc",
-              "elsolwind"],
+              "elwind",
+              "elpv"],
     
     'Q_OUT' : ["coal",
                "gas",
