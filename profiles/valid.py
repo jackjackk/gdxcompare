@@ -35,5 +35,6 @@
                "uranium"],
 
     'Q' : ["y", ],
-    'l' : None
+    'l' : None,
+    'tpes' : None,    
 }

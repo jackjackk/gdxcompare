@@ -242,6 +242,13 @@ function updatePlot() {
                   title: currSymb.lastElem.toUpperCase(),
 				  xlabel: 'MaxDiff: '+currSymb.maxDiff+'; TempMaxDiff: '+currSymb.tempMaxDiff,
                   includeZero: true,
+                  axes: {
+                      x: {
+                          axisLabelFormatter: function(val) {
+                              return val.toFixed(0);
+                          }
+                      }
+                  },
 				  sigFigs: 3,
 				  colorValue: 0.8,
 				  strokeWidth: 3,

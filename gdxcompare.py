@@ -50,11 +50,18 @@ parser.add_option('-r','--rename', action='store', type='string', dest='rename_s
 #parser.add_option('-s','--symb', action='store', type='string', dest='symb_regex', default = '^[A-Z_]+$', help='Name of the set used as x-axis')
 parser.add_option('-s','--symb', action='store', type='string', dest='symb_regex', default = '', help='Regex to filter names of the symbols to plot')
 parser.add_option('-p','--profile', action='store', type='string', dest='prof', default = '', help='Name of file under profiles subdir with predefined symbol regex to use (w/o ".py")')
+parser.add_option('-x','--xlambda', action='store', type='string', dest='xlambda', default = '', help='Lambda function applied to  ')
+parser.add_option('-w','--witch', action="store_true", dest="bwitch", default=False, help='Flag to get some WITCH-related flgas')
+
 (options, args) = parser.parse_args()
 
 if len(args) == 0:
     parser.print_help()
     sys.exit(0)
+
+if options.bwitch and (options.xlambda == ''):
+    options.xlambda = '2005+5*(x-1)'
+
 
 comparePath = os.path.dirname(os.path.realpath(__file__)) #os.path.abspath(os.path.split(sys.argv[0])[0])
 filt_dict = None
@@ -206,6 +213,11 @@ with open(os.path.join(comparePath,'data.txt'), 'w') as fout:
     for idom,d in enumerate(dompool):
         if idom > 0:
             fout.write(',\n')
+        if isinstance(d[-1], np.int64):
+            dlist = list(d)
+            drange = list(range(1,int(d[-1])+1))
+            if (options.xlambda != '') and (dlist == drange):
+                d = [eval(options.xlambda) for x in d]
         fout.write('new Set("s%d",%s)' % (idom,str(list(d))))
     fout.write('];\n')
 
