@@ -50,8 +50,9 @@ parser.add_option('-r','--rename', action='store', type='string', dest='rename_s
 #parser.add_option('-s','--symb', action='store', type='string', dest='symb_regex', default = '^[A-Z_]+$', help='Name of the set used as x-axis')
 parser.add_option('-s','--symb', action='store', type='string', dest='symb_regex', default = '', help='Regex to filter names of the symbols to plot')
 parser.add_option('-p','--profile', action='store', type='string', dest='prof', default = '', help='Name of file under profiles subdir with predefined symbol regex to use (w/o ".py")')
-parser.add_option('-x','--xlambda', action='store', type='string', dest='xlambda', default = '', help='Lambda function applied to  ')
-parser.add_option('-w','--witch', action="store_true", dest="bwitch", default=False, help='Flag to get some WITCH-related flgas')
+parser.add_option('-x','--xlambda', action='store', type='string', dest='xlambda', default = '', help='Lambda function applied to each element of the x-axis')
+parser.add_option('-w','--witch', action="store_true", dest="bwitch", default=False, help='Flag to get some WITCH-related flags')
+    parser.add_option('-d','--disaggsymb', action="store_true", dest="disaggsymb", default=False, help='Flag to disaggregate large symbols across elements of the first domain')
 
 (options, args) = parser.parse_args()
 
@@ -139,74 +140,85 @@ with open(os.path.join(comparePath,'data.txt'), 'w') as fout:
             #    bDone = True
             print('Skipping',s)
             continue
-        try:
-            df = svar.unstack(0)
-            domlist = []
+        symb2data_dict = {}
+        if options.disaggsymb:
+            for domfirst_entry in svar.index.levels[1].values:
+                snew = '{}|{}'.format(s,domfirst_entry)
+                symb2data_dict[snew] = svar.xs(domfirst_entry, axis=0, level=1)
+                symb2desc_dict[snew] = symb2desc_dict[s] + ' ({})'.format(domfirst_entry)
+        else:
+            symb2data_dict[s] = svar
+
+        for s, svar in symb2data_dict.items():
             try:
-                nx = len(df.axes[0].levels)
-            except:
-                nx = 2
-                df = pd.concat([df.stack()],keys=['only']).unstack(0)
-            for iax,ax in reversed(list(enumerate(df.axes[0].levels))):
-                tfound = True
-                for x in ax:
-                    try:
-                        int(x)
-                    except:
-                        tfound = False
+                df = svar.unstack(0)
+                domlist = []
+                try:
+                    nx = len(df.axes[0].levels)
+                except:
+                    nx = 2
+                    df = pd.concat([df.stack()],keys=['only']).unstack(0)
+                for iax in reversed(list(range(len(df.axes[0].levels)))):
+                    ax = df.index.get_level_values(iax).unique()
+                    tfound = True
+                    for x in ax:
+                        try:
+                            int(x)
+                        except:
+                            tfound = False
+                            break
+                    if tfound == True:
+                        axsnotime = list(range(nx))
+                        axsnotime.pop(iax)
+                        newaxslist = axsnotime+[iax,]
+                        #df = df.reorder_levels(axsnotime+[iax,]).sort()
+                        #if iax < nx-1:
+                        #    df = df.swaplevel(iax,nx-1).unstack().stack() #.sortlevel(nx-1)
+                        print('found time at iax =',iax)
                         break
-                if tfound == True:
-                    axsnotime = list(range(nx))
-                    axsnotime.pop(iax)
-                    newaxslist = axsnotime+[iax,]
-                    #df = df.reorder_levels(axsnotime+[iax,]).sort()
-                    #if iax < nx-1:
-                    #    df = df.swaplevel(iax,nx-1).unstack().stack() #.sortlevel(nx-1)
-                    print('found time at iax =',iax)
-                    break
-            if not tfound:
-                print('Skipping',s,'(no x-axis found)')
-                continue
-            #df2 = df.copy()
-            #df.index = pd.MultiIndex.from_product([range(len(item)) for item in df.axes[0].levels])
-            # For each row of data, of index x, build a new index where (x_i) is
-            sorted_levels_values = []
-            for i in list(range(nx)):
-                sorted_values = np.sort(df.axes[0].levels[i].values)
-                if i==iax:
-                    sorted_values = sorted_values[(sorted_values>xaxisMin) & (sorted_values<xaxisMax)]
-                domlist.append(add_to_doompol(sorted_values))
-            #df.index = pd.MultiIndex.from_tuples([tuple([np.searchsorted(sorted_levels_values[i],x[i]) for i in range(nx)]) for x in df.index])
-            data = {}
-            for k,v in df.T.iteritems():
-                if ((xaxisMin != 0) and (k[iax] < xaxisMin)) or ((xaxisMax != np.inf) and (k[iax] > xaxisMax)):
+                if not tfound:
+                    print('Skipping',s,'(no x-axis found)')
                     continue
-                val2write = np.zeros(ngdx)
-                #for i2read,i2write in enumerate(realgdxlist):
-                #    y = v.values[i2read]
-                #    if np.isnan(y) or (y > 1e200):
-                #        y = 0.
-                #    val2write[i2write] = y
-                for ig,g in enumerate(gdxList):
-                    try:
-                        y = v[g[:-4]]
-                        if (not np.isnan(y)) and (y < 1e200):
-                            val2write[ig] = y
-                    except:
-                        pass
-                data[','.join(['%d' % np.searchsorted(dompool[domlist[i]],k[i]) for i in newaxslist])] = [float('%.2e' % x) if x != 0.0 else 'NaN' for x in list(val2write)]
-            if domcounter>0:
-                fout.write(',\n')
-            fout.write('new Symb("%s","%s",%s,%s)' % (s, symb2desc_dict[s], str([domlist[i] for i in newaxslist]), str(data)))
-            domcounter += nx
-        except AssertionError as e:
-            message = e.args[0]
-            print(message)
-        except Exception as e:
-            traceback.print_exc()
-            #if s.name == 'Q_EN':
-            #    bDone = True
-            print('Skipping',s)
+                #df2 = df.copy()
+                #df.index = pd.MultiIndex.from_product([range(len(item)) for item in df.axes[0].levels])
+                # For each row of data, of index x, build a new index where (x_i) is
+                sorted_levels_values = []
+                for i in list(range(nx)):
+                    sorted_values = np.sort(df.index.get_level_values(i).unique())
+                    if i==iax:
+                        sorted_values = sorted_values[(sorted_values>xaxisMin) & (sorted_values<xaxisMax)]
+                    domlist.append(add_to_doompol(sorted_values))
+                #df.index = pd.MultiIndex.from_tuples([tuple([np.searchsorted(sorted_levels_values[i],x[i]) for i in range(nx)]) for x in df.index])
+                data = {}
+                for k,v in df.T.iteritems():
+                    if ((xaxisMin != 0) and (k[iax] < xaxisMin)) or ((xaxisMax != np.inf) and (k[iax] > xaxisMax)):
+                        continue
+                    val2write = np.zeros(ngdx)
+                    #for i2read,i2write in enumerate(realgdxlist):
+                    #    y = v.values[i2read]
+                    #    if np.isnan(y) or (y > 1e200):
+                    #        y = 0.
+                    #    val2write[i2write] = y
+                    for ig,g in enumerate(gdxList):
+                        try:
+                            y = v[g[:-4]]
+                            if (not np.isnan(y)) and (y < 1e200):
+                                val2write[ig] = y
+                        except:
+                            pass
+                    data[','.join(['%d' % np.searchsorted(dompool[domlist[i]],k[i]) for i in newaxslist])] = [float('%.2e' % x) if x != 0.0 else 'NaN' for x in list(val2write)]
+                if domcounter>0:
+                    fout.write(',\n')
+                fout.write('new Symb("%s","%s",%s,%s)' % (s, symb2desc_dict[s], str([domlist[i] for i in newaxslist]), str(data)))
+                domcounter += nx
+            except AssertionError as e:
+                message = e.args[0]
+                print(message)
+            except Exception as e:
+                traceback.print_exc()
+                #if s.name == 'Q_EN':
+                #    bDone = True
+                print('Skipping',s)
 
     fout.write('];\n')
     fout.write('var setList = [\n')
@@ -218,7 +230,7 @@ with open(os.path.join(comparePath,'data.txt'), 'w') as fout:
             drange = list(range(1,int(d[-1])+1))
             if (options.xlambda != '') and (dlist == drange):
                 d = [eval(options.xlambda) for x in d]
-        fout.write('new Set("s%d",%s)' % (idom,str(list(d))))
+        fout.write('new Set("s%d",%s)' % (idom,str([x if x != '' else '(none)' for x in d])))
     fout.write('];\n')
 
 

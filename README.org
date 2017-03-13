@@ -29,15 +29,16 @@ An HTML page will open up, showing something similar to the following
 * Options
 
 Options
-| Short version   | Long version          | Description                                                                                                                                                                                                                                   |
-|-----------------+-----------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| -h              | --help                | Show this options list and exit                                                                                                                                                                                                               |
-| -m XMAX         | --xmax=XMAX           | Max value for x-axis [0 = no max, default]                                                                                                                                                                                                    |
-| -f XMIN         | --xmin=XMIN           | Min value for x-axis [0 = no min, default]                                                                                                                                                                                                    |
+| Short version    | Long version           | Description                                                                                                                                                                                                                                   |
+|------------------+------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -h               | --help                 | Show this options list and exit                                                                                                                                                                                                               |
+| -m XMAX          | --xmax=XMAX            | Max value for x-axis [0 = no max, default]                                                                                                                                                                                                    |
+| -f XMIN          | --xmin=XMIN            | Min value for x-axis [0 = no min, default]                                                                                                                                                                                                    |
 | -r RENAME_STRING | --rename=RENAME_STRING | Comma-separated list of new names to give to GDXs (no spaces)                                                                                                                                                                                 |
 | -s SYMB_REGEX    | --symb=SYMB_REGEX      | Regex for filtering symbols [use ''frep'' profile by default], see option below                                                                                                                                                               |
-| -p PROF         | --profile=PROF        | Profile name, associated to a predefined combination of regex for filtering symbols [use a profile called ''frep'' by default, defined in ''compare.py'', which gives a subset of results that are usually looked in WITCH GDX results files] |
-
+| -p PROF          | --profile=PROF         | Profile name, associated to a predefined combination of regex for filtering symbols [use a profile called ''frep'' by default, defined in ''compare.py'', which gives a subset of results that are usually looked in WITCH GDX results files] |
+| -x LAMBDA_EXPR   | --xlambda=LAMBDA_EXPR  | Lambda function applied to each element of the x-axis                                                                                                                                                                                         |
+| -d               | --disaggsymb           | Flag to disaggregate large symbols across elements of the first domain                                                                                                                                                                        |
 For example:
 
 #+BEGIN_EXAMPLE
