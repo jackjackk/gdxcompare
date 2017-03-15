@@ -52,7 +52,7 @@ parser.add_option('-s','--symb', action='store', type='string', dest='symb_regex
 parser.add_option('-p','--profile', action='store', type='string', dest='prof', default = '', help='Name of file under profiles subdir with predefined symbol regex to use (w/o ".py")')
 parser.add_option('-x','--xlambda', action='store', type='string', dest='xlambda', default = '', help='Lambda function applied to each element of the x-axis')
 parser.add_option('-w','--witch', action="store_true", dest="bwitch", default=False, help='Flag to get some WITCH-related flags')
-    parser.add_option('-d','--disaggsymb', action="store_true", dest="disaggsymb", default=False, help='Flag to disaggregate large symbols across elements of the first domain')
+parser.add_option('-d','--disaggsymb', action="store_true", dest="disaggsymb", default=False, help='Flag to disaggregate large symbols across elements of the first domain')
 
 (options, args) = parser.parse_args()
 
