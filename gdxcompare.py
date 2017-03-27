@@ -53,6 +53,7 @@ parser.add_option('-p','--profile', action='store', type='string', dest='prof', 
 parser.add_option('-x','--xlambda', action='store', type='string', dest='xlambda', default = '', help='Lambda function applied to each element of the x-axis')
 parser.add_option('-w','--witch', action="store_true", dest="bwitch", default=False, help='Flag to get some WITCH-related flags')
 parser.add_option('-d','--disaggsymb', action="store_true", dest="disaggsymb", default=False, help='Flag to disaggregate large symbols across elements of the first domain')
+parser.add_option('-t','--twosymb', action='store', type='string', dest='twosymb_regex', default = '', help='Regex to filter names of the symbols to plot')
 
 (options, args) = parser.parse_args()
 
@@ -81,6 +82,10 @@ if options.symb_regex.startswith('@'):
 else:
     symb_regex = re.compile(options.symb_regex) #,re.IGNORECASE)
 
+if options.twosymb_regex != '':
+    options.disaggsymb = True
+twosymb_regex = re.compile(options.twosymb_regex)
+    
 xaxisMax = options.xmax
 if xaxisMax==0:
     xaxisMax = np.inf
@@ -150,6 +155,8 @@ with open(os.path.join(comparePath,'data.txt'), 'w') as fout:
             symb2data_dict[s] = svar
 
         for s, svar in symb2data_dict.items():
+            if not twosymb_regex.match(s):
+                continue
             try:
                 df = svar.unstack(0)
                 domlist = []
