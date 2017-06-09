@@ -1,0 +1,7 @@
+.idea/
+*.pyc
+*.txt
+__pycache__/
+*.gdx
+*.zip
+*.orig
