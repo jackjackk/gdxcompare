@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='gdxcompare',
-      version='0.1.0',
+      version='0.1.1a',
       description='Visually compare time series across GAMS GDX files',
       url='https://github.com/jackjackk/gdxcompare',
       author='Giacomo Marangoni',

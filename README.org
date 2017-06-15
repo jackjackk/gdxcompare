@@ -11,8 +11,7 @@ After installing the module, just call
 #+BEGIN_EXAMPLE
 python -m gdxcompare [options] gdx1 gdx2 ...
 #+END_EXAMPLE
-An HTML page will open up, showing something similar to the following
-[[file:other/gdxcompare-screenshot.png]]
+An HTML page will open up, showing something similar to [[https://github.com/jackjackk/gdxcompare/blob/master/other/gdxcompare-screenshot.png][this screenshot]].
 - Symbols (variables, parameters) are listed on the left and are selected by left clicking.
 - Set dependencies and corresponding elements are listed in adjacent columns. Set elements are selected via mouse hovering.
 - The color of the cells indicate the relative variance across elements in a set, so that blue elements will exhibit smaller differences across GDXs than red elements.
@@ -28,23 +27,23 @@ An HTML page will open up, showing something similar to the following
 * Options
 
 Options
-| Short version    | Long version           | Description                                                                                                                                                                                                                                   |
-|------------------+------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| -h               | --help                 | Show this options list and exit                                                                                                                                                                                                               |
-| -m XMAX          | --xmax=XMAX            | Max value for x-axis [0 = no max, default]                                                                                                                                                                                                    |
-| -f XMIN          | --xmin=XMIN            | Min value for x-axis [0 = no min, default]                                                                                                                                                                                                    |
-| -r RENAME_STRING | --rename=RENAME_STRING | Comma-separated list of new names to give to GDXs (no spaces)                                                                                                                                                                                 |
-| -s SYMB_REGEX    | --symb=SYMB_REGEX      | Regex for filtering symbols [use ''frep'' profile by default], see option below                                                                                                                                                               |
-| -p PROF          | --profile=PROF         | Profile name, associated to a predefined combination of regex for filtering symbols [use a profile called ''frep'' by default, defined in ''compare.py'', which gives a subset of results that are usually looked in WITCH GDX results files] |
-| -x LAMBDA_EXPR   | --xlambda=LAMBDA_EXPR  | Lambda function applied to each element of the x-axis                                                                                                                                                                                         |
-| -d               | --disaggsymb           | Flag to disaggregate large symbols across elements of the first domain                                                                                                                                                                        |
+| Short version      | Long version             | Description                                                                                                                                                                                                                                   |
+|--------------------+--------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ~-h~               | ~--help~                 | Show this options list and exit                                                                                                                                                                                                               |
+| ~-m XMAX~          | ~--xmax=XMAX~            | Max value for x-axis [0 = no max, default]                                                                                                                                                                                                    |
+| ~-f XMIN~          | ~--xmin=XMIN~            | Min value for x-axis [0 = no min, default]                                                                                                                                                                                                    |
+| ~-r RENAME_STRING~ | ~--rename=RENAME_STRING~ | Comma-separated list of new names to give to GDXs (no spaces)                                                                                                                                                                                 |
+| ~-s SYMB_REGEX~    | ~--symb=SYMB_REGEX~      | Regex for filtering symbols, or lambda starting with ~@~ (e.g. ~@len(x)<5~ for all symbol names shorter than 5 characters) |
+| ~-p PROF~          | ~--profile=PROF~         | Profile name, used if no ~SYMB_REGEX~ specified, associated to a predefined combination of regex for filtering symbols (see [[https://github.com/jackjackk/gdxcompare/tree/master/gdxcompare/profiles][here]] for examples) |
+| ~-x LAMBDA_EXPR~   | ~--xlambda=LAMBDA_EXPR~  | Lambda function applied to each element of the x-axis                                                                                                                                                                                         |
+| ~-d~               | ~--disaggsymb~           | Flag to disaggregate large symbols across elements of the first domain                                                                                                                                                                        |
 For example:
 
 #+BEGIN_EXAMPLE
 python -m gdxcompare -sQ -rbau,ref -m20 results_bau.gdx results_ref.gdx
 #+END_EXAMPLE
 
-will compare symbols starting with ''Q'' of the two GDX files ''results_bau.gdx'' and ''results_ref.gdx'' in the current path, labelling them as ''bau'' and ''ref'', and showing results up to period 20.
+will compare symbols starting with ~Q~ of the two GDX files ~results_bau.gdx~ and ~results_ref.gdx~ in the current path, labelling them as ~bau~ and ~ref~, and showing results up to period 20.
 
 * License
 

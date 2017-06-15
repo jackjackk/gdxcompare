@@ -1,7 +1,6 @@
 # MANIFEST.in
 include LICENSE.txt
 include *.rst
-include *.png
 include gdxcompare/*.py
 include gdxcompare/*.html
 include gdxcompare/*.js
