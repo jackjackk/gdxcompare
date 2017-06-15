@@ -5,3 +5,5 @@ __pycache__/
 *.gdx
 *.zip
 *.orig
+*.egg-info/
+dist/

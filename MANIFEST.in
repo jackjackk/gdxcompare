@@ -1,0 +1,4 @@
+# MANIFEST.in
+include LICENSE.txt
+include *.rst
+recursive-include gdxcompare *
