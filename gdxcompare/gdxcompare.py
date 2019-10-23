@@ -170,12 +170,14 @@ def main():
                     df = svar.unstack(0)
                     domlist = []
                     try:
-                        nx = len(df.axes[0].levels)
+                        df.axes[0].levels
                     except:
-                        nx = 2
-                        df = pd.concat([df.stack()],keys=['only']).unstack(0)
-                    for iax in reversed(list(range(len(df.axes[0].levels)))):
-                        ax = df.index.get_level_values(iax).unique()
+                        df = pd.concat({' ':df})  # workaround for menuHandler.js
+                    levels_list = df.axes[0].levels
+                    ilev2values = lambda df, iax: df.index.get_level_values(iax).unique()
+                    nx = len(levels_list)
+                    for iax in reversed(list(range(len(levels_list)))):
+                        ax = ilev2values(df, iax)
                         tfound = True
                         for x in ax:
                             try:
@@ -200,13 +202,15 @@ def main():
                     # For each row of data, of index x, build a new index where (x_i) is
                     sorted_levels_values = []
                     for i in list(range(nx)):
-                        sorted_values = np.sort(df.index.get_level_values(i).unique())
+                        sorted_values = np.sort(ilev2values(df,i))
                         if i==iax:
                             sorted_values = sorted_values[(sorted_values>xaxisMin) & (sorted_values<xaxisMax)]
                         domlist.append(add_to_dompool(sorted_values, dompool))
                     #df.index = pd.MultiIndex.from_tuples([tuple([np.searchsorted(sorted_levels_values[i],x[i]) for i in range(nx)]) for x in df.index])
                     data = {}
                     for k,v in df.T.iteritems():
+                        if nx == 1:
+                            k = [k]
                         if ((xaxisMin != 0) and (k[iax] < xaxisMin)) or ((xaxisMax != np.inf) and (k[iax] > xaxisMax)):
                             continue
                         val2write = np.zeros(ngdx)
@@ -253,3 +257,7 @@ def main():
         fout.write('var series = %s;' % str([g.split('\\')[-1] for g in gdxNames]))
 
     open_file(os.path.join(comparePath,'compare.html'))
+
+
+if __name__ == '__main__':
+    main()
