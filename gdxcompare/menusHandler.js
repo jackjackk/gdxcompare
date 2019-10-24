@@ -240,6 +240,7 @@ function updatePlot() {
 			  {
 				  labels: dataHeader,
                   title: currSymb.lastElem.toUpperCase(),
+//                              legend: "always",
 				  xlabel: 'MaxDiff: '+currSymb.maxDiff+'; TempMaxDiff: '+currSymb.tempMaxDiff,
                   includeZero: true,
                   axes: {
