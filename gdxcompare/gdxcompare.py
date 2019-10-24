@@ -226,10 +226,10 @@ def main():
                                     val2write[ig] = y
                             except:
                                 pass
-                        data[','.join(['%d' % np.searchsorted(dompool[domlist[i]],k[i]) for i in newaxslist])] = [float('%.2e' % x) if x != 0.0 else 'NaN' for x in list(val2write)]
+                        data[','.join(['%d' % np.searchsorted(dompool[domlist[i]],k[i]) for i in newaxslist])] = [float('%.2e' % x) if x != 0.0 else 'null' for x in list(val2write)]
                     if domcounter>0:
                         fout.write(',\n')
-                    fout.write('new Symb("%s","%s",%s,%s)' % (s, symb2desc_dict[s].replace('"',"'"), str([domlist[i] for i in newaxslist]), str(data)))
+                    fout.write('new Symb("%s","%s",%s,%s)' % (s, symb2desc_dict[s].replace('"',"'"), str([domlist[i] for i in newaxslist]), str(data).replace("'null'",'null')))
                     domcounter += nx
                 except AssertionError as e:
                     message = e.args[0]
