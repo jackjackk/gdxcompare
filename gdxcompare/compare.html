@@ -1,13 +1,8 @@
 <html>
-<style>
-td {
-vertical-align:top
-}
-</style>
 <head>
   <title>GDX Compare 1.0alpha</title>
-<script type="text/javascript"
-  src="dygraph-combined.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.css" />
 <script type="text/javascript"
   src="menusHandler.js"></script>
 <script type="text/javascript"
@@ -15,6 +10,53 @@ vertical-align:top
 <script>
 window.onload = init;
 </script>
+<style type="text/css">
+td {
+    vertical-align:top
+}
+/* see https://github.com/rstudio/dygraphs/issues/227 */
+.dygraph-legend {
+  width: auto !important;
+  min-width: 150px;
+  color: white;
+  background-color: #BABABA !important;
+  padding-left:5px;
+  border-color:#BABABA;
+  border-style:solid;
+  border-width:thin;
+  transition:0s 4s;
+  z-index: 80 !important;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, .3);
+  border-radius: 3px;
+}
+
+.dygraph-legend:hover{
+  transform: translate(-110%);
+  transition: 0s;
+}
+
+.dygraph-legend > span {
+  color: black;
+  padding-left:5px;
+  padding-right:2px;
+  margin-left:-5px;
+  background-color: white !important;
+  display: block;
+}
+
+.dygraph-legend > span:first-child {
+  margin-top:2px;
+}
+
+.dygraph-legend > span > span{
+  display: inline;
+}
+
+.highlight {
+  border-left: 2px solid #BABABA;
+  padding-left:3px !important;
+}
+</style>
 </head>
 <body>
 <div >
@@ -41,7 +83,7 @@ window.onload = init;
 		</tr>
 		<tr>
 		  <td>
-			<div id="graphdiv" class="myCol"></div>
+			<div id="graphdiv" class="myCol" style="width:1024px;"></div>
 		  </td>
 		</tr>
 	  </table>
