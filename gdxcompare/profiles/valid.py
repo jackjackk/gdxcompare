@@ -48,7 +48,9 @@
                "gas",
                "oil",
                "uranium"],
-
+    'FPRICE' : None,
+    'MCOST_FUEL' : None,
+    'Q_FUEL': None,
     'Q' : ["y", ],
     'l' : None,
     'tpes' : None,    
