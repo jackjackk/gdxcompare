@@ -238,23 +238,24 @@ function updatePlot() {
 			  // CSV or path to a CSV file.
 			  dataBody,
 			  {
-				  labels: dataHeader,
-                  title: currSymb.lastElem.toUpperCase(),
-//                              legend: "always",
-				  xlabel: 'MaxDiff: '+currSymb.maxDiff+'; TempMaxDiff: '+currSymb.tempMaxDiff,
-                  includeZero: true,
-                  axes: {
-                      x: {
-                          axisLabelFormatter: function(val) {
-                              return val.toFixed(0);
-                          }
-                      }
-                  },
-				  sigFigs: 3,
-				  colorValue: 0.8,
-				  strokeWidth: 3,
-//				  customBars: true,
-//				  errorBars: true
+			      labels: dataHeader,
+                              title: currSymb.lastElem.toUpperCase(),
+                              // legend: "always",
+			      xlabel: 'MaxDiff: '+currSymb.maxDiff+'; TempMaxDiff: '+currSymb.tempMaxDiff,
+                              includeZero: true,
+                              valueRange: yRange,
+                              axes: {
+                                  x: {
+                                      axisLabelFormatter: function(val) {
+                                          return val.toFixed(0);
+                                      }
+                                  }
+                              },
+			      sigFigs: 3,
+			      colorValue: 0.8,
+			      strokeWidth: 3,
+                              // customBars: true,
+                              // errorBars: true
 			  });
 		} else {
 			symbList.g.updateOptions(

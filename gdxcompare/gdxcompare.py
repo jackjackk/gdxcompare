@@ -55,6 +55,7 @@ def main():
     parser = optparse.OptionParser(usage=usage)
     parser.add_option('-m','--xmax', action='store', type='int', dest='xmax', default = 0, help='Max value for x-axis [0 = no max]')
     parser.add_option('-f','--xmin', action='store', type='int', dest='xmin', default = 0, help='Min value for x-axis [0 = no min]')
+    parser.add_option('-y','--ymax', action='store', type='int', dest='ymax', default = 0, help='Max value for y-axis [0 = no min]')
     parser.add_option('-r','--rename', action='store', type='string', dest='rename_string', default = '', help='Comma-separated list of new names to give to gdx')
     #parser.add_option('-s','--symb', action='store', type='string', dest='symb_regex', default = '^[A-Z_]+$', help='Name of the set used as x-axis')
     parser.add_option('-s','--symb', action='store', type='string', dest='symb_regex', default = '', help='Regex to filter names of the symbols to plot')
@@ -116,6 +117,10 @@ def main():
             raise Exception('Please provide a rename list with the same number of elements as the gdx')
 
     with open(os.path.join(comparePath,'data.txt'), 'w') as fout:
+        y_range = 'null'
+        if options.ymax != 0:
+            y_range = f'[0, {options.ymax}]'
+        fout.write(f'var yRange = {y_range};\n')
         fout.write('var symbList = [\n')
         lastnamePlaceholder = 'z'*10
         symb2gdxlist_dict = {}
