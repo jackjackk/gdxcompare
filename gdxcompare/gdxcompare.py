@@ -5,6 +5,8 @@ Created on Wed Mar 21 14:24:21 2012
 @author: Marangoni
 """
 from __future__ import print_function
+
+import importlib
 import sys, os
 from gdxpy import *
 import numpy as np
@@ -78,14 +80,10 @@ def main():
     comparePath = os.path.dirname(os.path.realpath(__file__)) #os.path.abspath(os.path.split(sys.argv[0])[0])
     filt_dict = None
     class dummy_symb_regex: pass
-    if options.symb_regex == '' and options.prof != '':
-        with open (os.path.join(comparePath,'profiles','%s.py'%(options.prof)), "r") as fileprof:
-            prof = eval(fileprof.read())
-        if isinstance(prof,dict):
-            options.symb_regex = '^({0})$'.format('|'.join(prof.keys()))
-            filt_dict = prof
-        else:
-            options.symb_regex = prof
+    if options.prof != '':
+        prof_module = importlib.import_module(os.path.join('profiles','%s.py'%(options.prof)))
+        filt = prof_module.filt
+        symb_regex = prof_module.symb_regex
     if options.symb_regex.startswith('@'):
         symb_regex = dummy_symb_regex()
         symb_regex.match = lambda x : eval(options.symb_regex[1:])
@@ -148,7 +146,7 @@ def main():
                     filt = filt_dict[s]
                 except:
                     filt = None
-                svar = gload(s,[gdxList[ig] for ig in realgdxlist],reshape=RESHAPE_SERIES,clear=True,filt=filt,single=False,remove_underscore=False,returnfirst=True)
+                svar = gload(s,[gdxList[ig] for ig in realgdxlist],clear=True,filt=filt,single=False,remove_underscore=False,returnfirst=True)
             except AssertionError as e:
                 message = e.args[0]
                 logger.info(message)
