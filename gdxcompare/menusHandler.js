@@ -544,3 +544,5 @@ function resizeColumns() {
 	}
 //	document.title = 'Height: '+(window.innerHeight*0.9);
 }
+
+

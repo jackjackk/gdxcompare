@@ -79,11 +79,15 @@ def main():
 
     comparePath = os.path.dirname(os.path.realpath(__file__)) #os.path.abspath(os.path.split(sys.argv[0])[0])
     filt_dict = None
+    filt = None
     class dummy_symb_regex: pass
     if options.prof != '':
-        prof_module = importlib.import_module(os.path.join('profiles','%s.py'%(options.prof)))
-        filt = prof_module.filt
-        symb_regex = prof_module.symb_regex
+        try:
+            prof_module = importlib.import_module(f'gdxcompare.profiles.{options.prof}')
+        except:
+            prof_module = importlib.import_module(f'profiles.{options.prof}')
+        filt_dict = prof_module.filt_dict
+        options.symb_regex = f'^{"|".join(filt_dict.keys())}$'
     if options.symb_regex.startswith('@'):
         symb_regex = dummy_symb_regex()
         symb_regex.match = lambda x : eval(options.symb_regex[1:])
@@ -145,7 +149,7 @@ def main():
                 try:
                     filt = filt_dict[s]
                 except:
-                    filt = None
+                    pass
                 svar = gload(s,[gdxList[ig] for ig in realgdxlist],clear=True,filt=filt,single=False,remove_underscore=False,returnfirst=True)
             except AssertionError as e:
                 message = e.args[0]
