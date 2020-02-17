@@ -114,7 +114,7 @@ def main():
         if len(gdxNames) != len(gdxList):
             raise Exception('Please provide a rename list with the same number of elements as the gdx')
 
-    with open(os.path.join(comparePath,'data.txt'), 'w') as fout:
+    with open(os.path.join(comparePath,'data.js'), 'w') as fout:
         y_range = 'null'
         if options.ymax != 0:
             y_range = f'[0, {options.ymax}]'

@@ -373,7 +373,7 @@ function setClick(cell) {
 	
 	var currSymb = symbList[symbList.curr.myId];
 	currSymb.tempMaxDiff = 0;
-    currSymb.lastElem = cell.innerHTML
+    currSymb.lastElem = cell.innerHTML;
 	for (var i=domId+1; i<(currSymb.sets.length-1); i++) {
 		colorColumn(i);
 	}
@@ -383,6 +383,7 @@ function setClick(cell) {
 //	alert('currSymb.mask: '+currSymb.mask+', setList.mask: '+setList.mask);		
 	updatePlot();
 }
+
 
 function colorColumn(j) {
 //	alert(symbList.curr.myId);
@@ -517,6 +518,9 @@ function symbClick() {
 
 function init(){
 	// init variables
+	// if (typeof setList === 'undefined') {
+	// 	setList = {};
+	// }
 	setList.mask = 0;
 	newDiv = document.createElement('div');
 	newDiv.className = "myCol"
@@ -530,6 +534,7 @@ function init(){
 	newDiv.appendChild(symbTable)
 	document.getElementById("symbMenu").appendChild(newDiv);
 	window.onresize = resizeColumns();
+	document.querySelector("#symbMenu > div > table > tbody > tr > td").click()
 }
 
 function resizeColumns() {
