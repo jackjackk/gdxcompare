@@ -5,6 +5,7 @@ function Symb(name, desc, sets, data) {
 	this.data = data;
 	this.mask = 0;
 	this.maxDiff = 0;
+	//this.maxVal = -1e12;
 	this.tempMaxDiff = 0;
 	var i;
 	for (i=0;i<sets.length-1;i++) {
@@ -239,11 +240,11 @@ function updatePlot() {
 			  dataBody,
 			  {
 			      labels: dataHeader,
-                              title: currSymb.lastElem.toUpperCase(),
-                              // legend: "always",
+				  title: currSymb.lastElem.toUpperCase(),
+				  legend: "always",
 			      xlabel: 'MaxDiff: '+currSymb.maxDiff+'; TempMaxDiff: '+currSymb.tempMaxDiff,
                               includeZero: true,
-                              valueRange: yRange,
+                              //valueRange: [0, currSymb.maxVal],
                               axes: {
                                   x: {
                                       axisLabelFormatter: function(val) {
@@ -253,7 +254,16 @@ function updatePlot() {
                               },
 			      sigFigs: 3,
 			      colorValue: 0.8,
-			      strokeWidth: 3,
+			      strokeWidth: 2,
+				  pointSize: 5,
+				  highlightCircleSize: 2,
+				  strokeBorderWidth: 1,
+				  highlightSeriesOpts: {
+					  strokeWidth: 4,
+					  strokeBorderWidth: 1,
+					  highlightCircleSize: 5
+				  },
+				  series: seriesOptions,
                               // customBars: true,
                               // errorBars: true
 			  });
@@ -263,10 +273,11 @@ function updatePlot() {
 					file: dataBody,
 					labels: dataHeader,
                     title: currSymb.lastElem.toUpperCase(),
+					//valueRange: [0, currSymb.maxVal],
 					xlabel: 'MaxDiff: '+currSymb.maxDiff+'; TempMaxDiff: '+currSymb.tempMaxDiff,
 				});
 		}
-					
+		//console.log(currSymb.maxVal);
 	}
 }
 
@@ -278,6 +289,7 @@ function getColor(preIndList,domId) {
 	if (ret != undefined) {
         if (! isNaN(ret)) {
 		    currSymb.tempMaxDiff = Math.max(ret,currSymb.tempMaxDiff);
+		    //currSymb.maxVal = Math.max(ret, currSymb.maxVal);
         }
 		return ret;
 	}
@@ -303,13 +315,17 @@ function getColor(preIndList,domId) {
 				}
 				var avg = cum/d.length;
 				cum = 0.0;
+				//tmax = -1e12;
 				for (i=d.length-1;i>=0;i--) {
                     if (isNaN(d[i])) continue;
 					cum += Math.pow(d[i]-avg,2);
+					// if (d[i] > 1e8) continue;
+					//tmax = Math.max(d[i], tmax);
 				}
 				ret = cum;
                 if (! isNaN(ret)) {
 				    currSymb.tempMaxDiff = Math.max(ret,currSymb.tempMaxDiff);
+				    //currSymb.maxVal = Math.max(tmax,currSymb.maxVal);
                 }
 			}
 		}

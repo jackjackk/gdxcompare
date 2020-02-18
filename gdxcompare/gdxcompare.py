@@ -52,9 +52,43 @@ def add_to_dompool(new_sorted_elemlist, dompool):
     return i+1
 
 
+colors_list = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
+styles_list = ["null", "Dygraph.DASHED_LINE", "[2, 2]", "Dygraph.DOT_DASH_LINE", "null", "Dygraph.DASHED_LINE", "[2, 2]", "Dygraph.DOT_DASH_LINE"]
+points_list = ["false", "false", "false", "false", "true", "true", "true", "true", ]
+
+import pandas as pd
+import json
+
+
+def assignStylesAndColorsToSeries(labels, i_style_field=None, delimiter='_'):
+    dreplace = {}
+    x = pd.DataFrame([u.split(delimiter) for u in labels])
+    idx4color = list(range(x.shape[1]))
+    dfdict = {}
+    strings2unquote = []
+    if i_style_field is not None:
+        sstyle = x.iloc[:,i_style_field]
+        words_list = sstyle.unique()
+        dfdict['strokePattern'] = (sstyle + '_sp').values
+        dreplace.update(dict(zip(words_list + '_sp', styles_list)))
+        dfdict['drawPoints'] = (sstyle + '_dp').values
+        dreplace.update(dict(zip(words_list + '_dp', points_list)))
+        idx4color.pop(i_style_field)
+        strings2unquote = list(set(styles_list)) + list(set(points_list))
+    scolor = x.iloc[:, idx4color].T.drop_duplicates().T.apply(lambda u: delimiter.join(u), axis=1)
+    dfdict['color'] = scolor.values
+    dreplace.update(dict(zip(scolor.unique(), colors_list)))
+    df = pd.DataFrame(dfdict, index=labels)
+    js2write = json.dumps(df.replace(dreplace).T.to_dict())
+    for s in strings2unquote:
+        js2write = js2write.replace(f'"{s}"', s)
+    return js2write
+
+
 def main():
     usage = "usage: %prog [options] gdx1 gdx2 ..."
     parser = optparse.OptionParser(usage=usage)
+    parser.add_option('-e','--style', action='store', type='int', dest='style_field', default = None, help='Field number identifying the line style, after splitting name by _')
     parser.add_option('-m','--xmax', action='store', type='int', dest='xmax', default = 0, help='Max value for x-axis [0 = no max]')
     parser.add_option('-f','--xmin', action='store', type='int', dest='xmin', default = 0, help='Min value for x-axis [0 = no min]')
     parser.add_option('-y','--ymax', action='store', type='int', dest='ymax', default = 0, help='Max value for y-axis [0 = no min]')
@@ -260,8 +294,9 @@ def main():
             fout.write('new Set("s%d",%s)' % (idom,str([x if x != '' else '(none)' for x in d])))
         fout.write('];\n')
 
-
-        fout.write('var series = %s;' % str([g.split('\\')[-1] for g in gdxNames]))
+        labels = [g.split('\\')[-1] for g in gdxNames]
+        fout.write('var series = %s;' % str(labels))
+        fout.write(f'var seriesOptions = {assignStylesAndColorsToSeries(labels, options.style_field)};')
 
     open_file(os.path.join(comparePath,'compare.html'))
 
