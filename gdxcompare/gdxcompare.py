@@ -62,7 +62,7 @@ import json
 
 def assignStylesAndColorsToSeries(labels, i_style_field=None, delimiter='_'):
     dreplace = {}
-    x = pd.DataFrame([u.split(delimiter) for u in labels])
+    x = pd.DataFrame([u.replace('/','_').split(delimiter) for u in labels]).T.drop_duplicates().T
     idx4color = list(range(x.shape[1]))
     dfdict = {}
     strings2unquote = []
@@ -75,7 +75,7 @@ def assignStylesAndColorsToSeries(labels, i_style_field=None, delimiter='_'):
         dreplace.update(dict(zip(words_list + '_dp', points_list)))
         idx4color.pop(i_style_field)
         strings2unquote = list(set(styles_list)) + list(set(points_list))
-    scolor = x.iloc[:, idx4color].T.drop_duplicates().T.apply(lambda u: delimiter.join(u), axis=1)
+    scolor = x.iloc[:, idx4color].apply(lambda u: delimiter.join(u), axis=1)
     dfdict['color'] = scolor.values
     dreplace.update(dict(zip(scolor.unique(), colors_list)))
     df = pd.DataFrame(dfdict, index=labels)
