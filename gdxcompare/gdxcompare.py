@@ -75,7 +75,7 @@ def assignStylesAndColorsToSeries(labels, i_style_field=None, delimiter='_'):
         dreplace.update(dict(zip(words_list + '_dp', points_list)))
         idx4color.pop(i_style_field)
         strings2unquote = list(set(styles_list)) + list(set(points_list))
-    scolor = x.iloc[:, idx4color].apply(lambda u: delimiter.join(u), axis=1)
+    scolor = x.iloc[:, idx4color].apply(lambda u: delimiter.join([y if y is not None else '' for y in u]), axis=1)
     dfdict['color'] = scolor.values
     dreplace.update(dict(zip(scolor.unique(), colors_list)))
     df = pd.DataFrame(dfdict, index=labels)
