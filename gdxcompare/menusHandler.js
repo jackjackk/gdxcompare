@@ -52,7 +52,7 @@ var yaxis =
 				[3,5,2,1,16,8], [13,5,2,1,6,2], [3,5,22,1,6,4]
 			]
 		],
-		[ 
+		[
 			[34,5,2,1,6,9], [3,5,24,1,6,10], [3,5,2,14,6,12]
 		],
 		[
@@ -120,14 +120,14 @@ function createMenuTable(elemList, elemClick, hover) {
 	for (i=0;i<elemList.length;i++) {
 		//insert a new row at the bottom
 		var newRow = table.insertRow(i);
- 
+
 		//create new cells
 		var newCell = newRow.insertCell(0);
 		if (typeof(elemList[i]) == 'object') {
 			newCell.innerHTML = elemList[i].name;
 		} else {
 			newCell.innerHTML = elemList[i];
-		}			
+		}
 //		newCell.style.margin = "-10px";
 		newCell.style.borderStyle = borderStyle[0];
 		newCell.style.borderWidth = borderWidth[0];
@@ -191,7 +191,7 @@ function updatePlot() {
 		for (j=0;j<sets.length-1;j++) {
 			indList = indList + setList[sets[j]].currId + ','
 		}
-		
+
 		var xdata = xset.elems;
 		var i;
 		var dataBody = new Array();
@@ -201,15 +201,15 @@ function updatePlot() {
 			dataBody[i] = new Array();
 			dataBody[i][0] = xdata[i];
 			dataRecord = currSymb.data[indList+i]
-//			alert(indList+i+" : "+dataRecord);	
+//			alert(indList+i+" : "+dataRecord);
 			if (dataRecord == undefined) {
-				for (s=0;s<series.length;s++) {
-					dataBody[i][s+1] = 0;
+				dataRecord = Array(series.length).fill(0)
+			}
+			for (s=0;s<series.length;s++) {
+				if (typeof(dataRecord[s]) == 'number') {
+					dataRecord[s] = [null, dataRecord[s], null];
 				}
-			} else {
-				for (s=0;s<series.length;s++) {
-					dataBody[i][s+1] = dataRecord[s];
-				}				
+				dataBody[i][s+1] = dataRecord[s];
 			}
 		}
 /*		var rep = '['
@@ -264,7 +264,7 @@ function updatePlot() {
 					  highlightCircleSize: 5
 				  },
 				  series: seriesOptions,
-                              // customBars: true,
+                              customBars: true,
                               // errorBars: true
 			  });
 		} else {
@@ -339,7 +339,7 @@ function getColor(preIndList,domId) {
 			preIndList +=',';
 		var tempPreIndList;
 		ret = -1;
-		var dataCum = 0; 
+		var dataCum = 0;
 		var missingCount = 0;
 		var tempRet;
 		for (var i=0; i<currSet.elems.length; i++) {
@@ -350,7 +350,7 @@ function getColor(preIndList,domId) {
 				tempRet = 0;
 			}
 			dataCum += tempRet;
-//			alert('domId: '+domId+'tempPreIndList: '+tempPreIndList+'; ret: '+tempRet+'; dataCum: '+dataCum);			
+//			alert('domId: '+domId+'tempPreIndList: '+tempPreIndList+'; ret: '+tempRet+'; dataCum: '+dataCum);
 		}
 		if (missingCount<currSet.elems.length) {
 			ret = dataCum;
@@ -386,7 +386,7 @@ function setClick(cell) {
 		setState(prev,0);
 	currSet.curr = cell;
 	currSet.currId = cell.myId;
-	
+
 	var currSymb = symbList[symbList.curr.myId];
 	currSymb.tempMaxDiff = 0;
     currSymb.lastElem = cell.innerHTML;
@@ -394,9 +394,9 @@ function setClick(cell) {
 		colorColumn(i);
 	}
 	setState(cell,1);
-	
+
 	setList.mask |= 1<<currSetId;
-//	alert('currSymb.mask: '+currSymb.mask+', setList.mask: '+setList.mask);		
+//	alert('currSymb.mask: '+currSymb.mask+', setList.mask: '+setList.mask);
 	updatePlot();
 }
 
@@ -425,7 +425,7 @@ function colorColumn(j) {
 				vmax = Math.max(vcol[i],vmax);
 		}
 //		alert('preIndList: '+tempPreIndList+'; j: '+j+'; vcol: '+vcol);
-	}	
+	}
 	currSymb.maxDiff = Math.max(vmax,currSymb.maxDiff);
 	for (var i=0;i<currSet.elems.length;i++) {
 		var hsl = currSet.currTable.rows[i].cells[0].hsl;
@@ -470,12 +470,12 @@ function symbClick() {
 	for (i=0;i<sets.length;i++) {
 		symbList.values[i] = {};
 	}
-	
+
 	// write headers
 	trmenus = document.getElementById("menus").rows[0];
 	for (j=trmenus.cells.length-1;j>0;j--) {
 		trmenus.deleteCell(j);
-	}	
+	}
 	for (j=0;j<sets.length-1;j++) {
 		currSet = setList[sets[j]];
 		newCell = document.createElement('th');
@@ -487,7 +487,7 @@ function symbClick() {
 	trmenus = document.getElementById("menus").rows[1];
 	for (j=trmenus.cells.length-1;j>0;j--) {
 		trmenus.deleteCell(j);
-	}	
+	}
 	var cellsToSelect = new Array(sets.length-1);
 	for (j=0;j<sets.length-1;j++) {
 		currSet = setList[sets[j]];
@@ -503,7 +503,7 @@ function symbClick() {
 			setOnClick,true);
 		newMenuTable.myId = sets[j];
 		newMenuTable.domId = j;
-		
+
 		currSet.currTable = newMenuTable;
 
 		var activeId = 0;
@@ -513,14 +513,14 @@ function symbClick() {
 		cellsToSelect[j] = newMenuTable.rows[activeId].cells[0];
 //		currSet.curr = cellToSelect;
 //		setState(cellToSelect,1);
-		
+
 		newDiv.appendChild(newMenuTable);
 		newCell.appendChild(newDiv);
 	}
 
 	colorColumn(0);
 	for (j=0;j<sets.length-1;j++) {
-		setClick(cellsToSelect[j]);		
+		setClick(cellsToSelect[j]);
 	}
 	if (symbClick.graphTitle == undefined)
 		symbClick.graphTitle = document.getElementById('graphtitle');
@@ -543,7 +543,7 @@ function init(){
 	newDiv.style.overflow = 'auto';
 	newDiv.style.paddingRight = '20px';
 	newDiv.style.paddingLeft = '5px';
-	
+
 	//get the symbTableDiv
 	var symbTable = createMenuTable(
 		symbList,symbClick,false);

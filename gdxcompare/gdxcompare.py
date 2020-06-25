@@ -56,6 +56,17 @@ colors_list = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b',
 styles_list = ["null", "Dygraph.DASHED_LINE", "[2, 2]", "Dygraph.DOT_DASH_LINE", "null", "Dygraph.DASHED_LINE", "[2, 2]", "Dygraph.DOT_DASH_LINE"]
 points_list = ["false", "false", "false", "false", "true", "true", "true", "true", ]
 
+symb_change_dict = {'K_EN': {
+                        'jreal': {
+                            'elhydro': (lambda x: x[['elhydro_new','elhydro_old','elhydro']].sum(axis=1)),
+                            'elpb': (lambda x: x[['elpb_new','elpb_old','elpb']].sum(axis=1))
+                        }},
+    '.*EN': {
+                    'n': {
+                        'world': (lambda x: x.sum(axis=1))
+                    }}
+}
+
 import pandas as pd
 import json
 
@@ -93,6 +104,7 @@ def main():
     parser.add_option('-f','--xmin', action='store', type='int', dest='xmin', default = 0, help='Min value for x-axis [0 = no min]')
     parser.add_option('-y','--ymax', action='store', type='int', dest='ymax', default = 0, help='Max value for y-axis [0 = no min]')
     parser.add_option('-r','--rename', action='store', type='string', dest='rename_string', default = '', help='Comma-separated list of new names to give to gdx')
+    parser.add_option('-R','--reference', action='store', type='string', dest='reference', default =None, help='Comma-separated list of new names to give to gdx')
     #parser.add_option('-s','--symb', action='store', type='string', dest='symb_regex', default = '^[A-Z_]+$', help='Name of the set used as x-axis')
     parser.add_option('-s','--symb', action='store', type='string', dest='symb_regex', default = '', help='Regex to filter names of the symbols to plot')
     parser.add_option('-p','--profile', action='store', type='string', dest='prof', default = '', help='Name of file under profiles subdir with predefined symbol regex to use (w/o ".py")')
@@ -143,10 +155,16 @@ def main():
     else:
         xaxisMin -=1
     gdxList = args
+    if options.bwitch:
+        gdxList.append(os.path.join(comparePath, 'gdx', 'valid_witch17.gdx'))
+        if options.rename_string != '':
+            options.rename_string += ',valid'
+    else:
+        symb_change_dict = {}
     gdxNames = []
     if options.rename_string == '':
         for i,gname in enumerate(gdxList):
-            gdxNames.append(gname[:-4])
+            gdxNames.append(gname[:-4].replace(os.path.join(comparePath, 'gdx')+'/', ''))
     else:
         gdxNames = options.rename_string.split(',')
         if len(gdxNames) != len(gdxList):
@@ -209,6 +227,14 @@ def main():
                     continue
                 try:
                     df = svar.unstack(0)
+                    for symb_match, dchange in symb_change_dict.items():
+                        if not re.match(symb_match, s):
+                            continue
+                        for k2change, change_spec in dchange.items():
+                            df2 = df.stack().unstack(k2change)
+                            for v2change, fchange in change_spec.items():
+                                df2[v2change] = fchange(df2)
+                            df = df2.stack().unstack(-2)
                     domlist = []
                     try:
                         df.axes[0].levels
@@ -249,25 +275,40 @@ def main():
                         domlist.append(add_to_dompool(sorted_values, dompool))
                     #df.index = pd.MultiIndex.from_tuples([tuple([np.searchsorted(sorted_levels_values[i],x[i]) for i in range(nx)]) for x in df.index])
                     data = {}
+                    if options.reference is not None:
+                        gdxname2add = options.reference
+                        gdxList = [gdxname2add, ] + gdxList
+                        gdxNames = [gdxname2add, ] + gdxNames
+                        ngdx += 1
+                        vref = pd.read_pickle(f'/home/jack/working/dev-witch-python/{options.reference}.pck')
                     for k,v in df.T.iteritems():
                         if nx == 1:
                             k = [k]
                         if ((xaxisMin != 0) and (k[iax] < xaxisMin)) or ((xaxisMax != np.inf) and (k[iax] > xaxisMax)):
                             continue
-                        val2write = np.zeros(ngdx)
+                        val2write = [0]*ngdx
                         #for i2read,i2write in enumerate(realgdxlist):
                         #    y = v.values[i2read]
                         #    if np.isnan(y) or (y > 1e200):
                         #        y = 0.
                         #    val2write[i2write] = y
+                        if options.reference is not None:
+                            kvar = '|'.join(x for x in k[:-2] if x not in ['','witch'])
+                            kreg = k[-1]
+                            kyear = k[-2]
                         for ig,g in enumerate(gdxList):
+                            if g == options.reference:
+                                try:
+                                    val2write[ig] = [float('%.2e' % x) for x in vref.loc[(kvar, kreg, kyear)].values]
+                                except:
+                                    pass
                             try:
                                 y = v[g[:-4]]
                                 if (not np.isnan(y)) and (y < 1e200):
-                                    val2write[ig] = y
+                                    val2write[ig] = float('%.2e' % y)
                             except:
                                 pass
-                        data[','.join(['%d' % np.searchsorted(dompool[domlist[i]],k[i]) for i in newaxslist])] = [float('%.2e' % x) if x != 0.0 else 'null' for x in list(val2write)]
+                        data[','.join(['%d' % np.searchsorted(dompool[domlist[i]],k[i]) for i in newaxslist])] = [x if x != 0.0 else 'null' for x in list(val2write)]
                     if domcounter>0:
                         fout.write(',\n')
                     fout.write('new Symb("%s","%s",%s,%s)' % (s, symb2desc_dict[s].replace('"',"'"), str([domlist[i] for i in newaxslist]), str(data).replace("'null'",'null')))
