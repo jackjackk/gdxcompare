@@ -5,6 +5,7 @@ filt_dict = {
            ['Price', '((Primary|Secondary) Energy|Carbon)', '', '', '(world|china|usa|europe|india|r5.*)'],
            ['Primary Energy',' ', '', '', '(world|china|usa|europe|india|r5.*)'],
            ['Secondary Energy','', '', '', '(world|china|usa|europe|india|r5.*)'],
+           ['Final Energy','', '', '', '(world|china|usa|europe|india|r5.*)'],
            ['LCOE','', '', '', '(world|china|usa|europe|india|r5.*)'],
            ['Temperature','', '', '', '(world|china|usa|europe|india|r5.*)'],
            ],
